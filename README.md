@@ -11,3 +11,10 @@
 - Python packages: `pip install -r requirements.txt`
 
 - Disable CPU scaling: `sudo cpupower frequency-set --governor performance`
+
+
+## Usage
+
+- Build: `make build`
+
+- Run & Plot: `make run`
