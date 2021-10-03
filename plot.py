@@ -35,17 +35,22 @@ def plot_groups(
     plt.clf()
     for label, group in label_groups:
         plt.plot(group["x"], group["y"], label=label, marker=".")
+
     if logx:
         plt.xscale("log")
     if logy:
         plt.yscale("log")
+
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
     plt.title(title)
-    plt.legend()
+
+    if len(label_groups) > 1:
+        plt.legend()
 
     if output_path:
         plt.savefig(output_path, bbox_inches="tight")
+
     plt.show()
 
 
