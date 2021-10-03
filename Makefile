@@ -13,7 +13,10 @@ run:
 	build/pmbench \
 		--benchmark_counters_tabular=true \
 		--benchmark_out=$(output) \
-		--benchmark_out_format=json
+		--benchmark_out_format=json \
+#		--benchmark_repetitions=5 \
+#		--benchmark_report_aggregates_only=true \
+#		--benchmark_display_aggregates_only=true
 
 	python plot.py $(output)
 

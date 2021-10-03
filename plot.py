@@ -16,8 +16,8 @@ def read_data(file):
     with open(file, "r") as f:
         json_data = json.load(f)
         data = pd.DataFrame.from_dict(json_data["benchmarks"])
-        data["group"] = data["name"].apply(parse, args=(2,)).apply(int)
-        data["benchmark"] = data["name"].apply(parse, args=(1,))
+        data["group"] = data["name"].apply(parse, args=(1,)).apply(int)
+        data["benchmark"] = data["name"].apply(parse, args=(0,))
         data["x"] = data["name"].apply(parse, args=(-1,))
         data["y"] = data["items_per_second"]
         return data
