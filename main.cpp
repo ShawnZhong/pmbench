@@ -10,7 +10,7 @@ using benchmark::State;
 
 constexpr auto LAYOUT = "hash_table";
 constexpr auto POOL_PATH = "pool";
-constexpr auto POOL_SIZE = 32 * PMEMOBJ_MIN_POOL;
+constexpr auto POOL_SIZE = 64 * PMEMOBJ_MIN_POOL;
 
 struct Root {
   pmem::obj::persistent_ptr<char[]> ptr;
@@ -32,6 +32,9 @@ public:
   }
   ~BenchmarkContext() {
     state.SetItemsProcessed(state.iterations());
+    if (state.range(0) != 0) {
+      state.SetBytesProcessed(state.iterations() * state.range(0));
+    }
     if (state.thread_index() == 0) {
       pop.close();
     }
@@ -45,7 +48,6 @@ void BM_pmemobj_alloc(State &state) {
   for (auto _ : state) {
     pmemobj_alloc(pop.handle(), ptr, size, 0, nullptr, nullptr);
   }
-  state.SetBytesProcessed(state.iterations() * size);
 }
 
 void BM_pmemobj_reserve(State &state) {
@@ -55,7 +57,6 @@ void BM_pmemobj_reserve(State &state) {
   for (auto _ : state) {
     pmemobj_reserve(pop.handle(), &act, size, 0);
   }
-  state.SetBytesProcessed(state.iterations() * size);
 }
 
 void BM_pmemobj_tx_alloc(State &state) {
@@ -68,7 +69,6 @@ void BM_pmemobj_tx_alloc(State &state) {
         } TX_END
     // clang-format on
   }
-  state.SetBytesProcessed(state.iterations() * size);
 }
 
 void BM_make_persistent(State &state) {
@@ -78,7 +78,6 @@ void BM_make_persistent(State &state) {
     pmem::obj::transaction::run(
         pop, [&]() { pmem::obj::make_persistent<char[]>(size); });
   }
-  state.SetBytesProcessed(state.iterations() * size);
 }
 
 void BM_make_persistent_atomic(State &state) {
@@ -87,7 +86,6 @@ void BM_make_persistent_atomic(State &state) {
   for (auto _ : state) {
     pmem::obj::make_persistent_atomic<char[]>(pop, root->ptr, size);
   }
-  state.SetBytesProcessed(state.iterations() * size);
 }
 
 void BM_transaction(State &state) {
